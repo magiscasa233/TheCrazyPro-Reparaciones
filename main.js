@@ -31,8 +31,8 @@
     });
   }
 
-  /* ---------- Menú móvil (sitio público) ----------------------------- */
-  var toggle = $('.nav-toggle:not(#panel-toggle)');
+  /* ---------- Menú móvil -------------------------------------------- */
+  var toggle = $('.nav-toggle');
   var nav = $('#nav-principal');
   if (toggle && nav) {
     toggle.addEventListener('click', function () {
@@ -43,22 +43,6 @@
       if (ev.target.tagName === 'A') {
         nav.classList.remove('abierto');
         toggle.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-
-  /* ---------- Menú móvil (panel de administrador) --------------------- */
-  var panelToggle = $('#panel-toggle');
-  var panelLateral = $('#panel-lateral');
-  if (panelToggle && panelLateral) {
-    panelToggle.addEventListener('click', function () {
-      var abierto = panelLateral.classList.toggle('abierto');
-      panelToggle.setAttribute('aria-expanded', abierto ? 'true' : 'false');
-    });
-    panelLateral.addEventListener('click', function (ev) {
-      if (ev.target.tagName === 'A') {
-        panelLateral.classList.remove('abierto');
-        panelToggle.setAttribute('aria-expanded', 'false');
       }
     });
   }
