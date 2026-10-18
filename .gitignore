@@ -1,0 +1,16 @@
+# Secretos
+.env
+
+# Archivos subidos por el administrador
+/uploads/*
+!/uploads/.gitkeep
+!/uploads/.htaccess
+
+# Dependencias (opcionales en este proyecto)
+/vendor/
+composer.lock
+
+# Sistema
+Thumbs.db
+.DS_Store
+*.log

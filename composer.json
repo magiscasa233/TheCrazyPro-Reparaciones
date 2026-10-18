@@ -1,0 +1,19 @@
+{
+  "name": "crazypro/reparaciones",
+  "description": "Plataforma web de CrazyPro-Reparaciones: sitio público, panel de cliente y CMS de administrador.",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.0",
+    "ext-pdo": "*",
+    "ext-curl": "*",
+    "ext-mbstring": "*"
+  },
+  "suggest": {
+    "vlucas/phpdotenv": "Lector de .env más completo. El proyecto trae uno propio en config/config.php, así que es opcional.",
+    "league/oauth2-google": "Cliente OAuth de Google. El proyecto implementa el flujo con cURL directo, así que es opcional."
+  },
+  "config": {
+    "optimize-autoloader": true
+  }
+}
