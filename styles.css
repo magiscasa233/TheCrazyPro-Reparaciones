@@ -60,13 +60,9 @@ html[data-tema="claro"] {
 }
 
 /* ---------- 2. Base -------------------------------------------------- */
-:root { box-sizing: border-box; }
 *, *::before, *::after { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: env(safe-area-inset-top, 0px);
-}
+html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
@@ -77,7 +73,6 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 h1, h2, h3, h4 {
@@ -182,7 +177,6 @@ img { max-width: 100%; height: auto; display: block; }
   background: color-mix(in srgb, var(--bg-base) 88%, transparent);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--borde);
-  padding-top: env(safe-area-inset-top, 0px);
 }
 .barra__inner {
   width: min(100% - 2.5rem, var(--ancho));
@@ -398,15 +392,7 @@ select { appearance: none; background-image: none; }
 
 /* Catálogo */
 .cat-tabs {
-  display: flex; gap: .5rem; margin-bottom: 1.8rem;
-  flex-wrap: wrap;
-}
-@media (max-width: 560px) {
-  .cat-tabs {
-    flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
-    margin-inline: -1.25rem; padding-inline: 1.25rem; padding-bottom: .3rem;
-  }
-  .cat-tab { flex: 0 0 auto; }
+  display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.8rem;
 }
 .cat-tab {
   font: 600 .88rem/1 var(--f-texto);
@@ -539,9 +525,6 @@ select { appearance: none; background-image: none; }
 .panel-layout { display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: 100dvh; }
 @media (max-width: 900px) { .panel-layout { grid-template-columns: 1fr; } }
 
-/* Barra superior del panel: solo existe visualmente en móvil */
-.panel-topbar { display: none; }
-
 .panel-lateral {
   background: var(--bg-surface);
   border-right: 1px solid var(--borde);
@@ -561,55 +544,12 @@ select { appearance: none; background-image: none; }
   margin: .9rem .8rem .4rem; font-size: .72rem; font-weight: 700;
   color: var(--metal-dark); letter-spacing: .04em;
 }
-
-@media (max-width: 900px) {
-  .panel-topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: .7rem 1rem;
-    padding-top: calc(.7rem + env(safe-area-inset-top, 0px));
-    background: color-mix(in srgb, var(--bg-base) 88%, transparent);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--borde);
-    position: sticky; top: 0; z-index: 85;
-  }
-  .panel-topbar .marca { margin: 0; }
-  .panel-topbar .marca__txt { font-size: .95rem; }
-
-  /* En escritorio el aside lleva su propio logo; en móvil ya está en la barra */
-  .panel-lateral .marca--escritorio { display: none; }
-
-  .panel-lateral {
-    position: fixed; z-index: 84;
-    top: calc(57px + env(safe-area-inset-top, 0px)); left: 0; right: 0;
-    border-right: 0; border-bottom: 1px solid var(--borde);
-    max-height: calc(100dvh - 57px - env(safe-area-inset-top, 0px));
-    overflow-y: auto;
-    transform: translateY(-120%); transition: transform .25s ease;
-    box-shadow: var(--sombra-panel);
-  }
-  .panel-lateral.abierto { transform: translateY(0); }
-}
-
 .panel-cuerpo { padding: clamp(1.25rem, 3vw, 2.25rem); min-width: 0; }
 .panel-cabeza {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
   gap: 1rem; margin-bottom: 1.8rem;
 }
 .panel-cabeza h1 { font-size: clamp(1.7rem, 3vw, 2.2rem); margin: 0; }
-
-/* Formulario de "agregar pieza": 5 columnas en escritorio, se acomoda en móvil */
-.grid-pieza-form { display: grid; grid-template-columns: 2fr 1fr .6fr 1fr auto; gap: .6rem; align-items: flex-end; }
-@media (max-width: 760px) { .grid-pieza-form { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 480px) { .grid-pieza-form { grid-template-columns: 1fr; } }
-
-/* Fila de edición de un estado de orden */
-.grid-estado-form { display: grid; grid-template-columns: 2fr .7fr .8fr auto auto; gap: .7rem; align-items: flex-end; }
-.grid-estado-form__activo { display: flex; gap: .4rem; align-items: center; color: var(--text-primary); font-weight: 500; padding-bottom: .7rem; }
-@media (max-width: 760px) { .grid-estado-form { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 480px) {
-  .grid-estado-form { grid-template-columns: 1fr; }
-  .grid-estado-form__activo { padding-bottom: 0; }
-}
 
 .metricas { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); margin-bottom: 2rem; }
 .metrica {
@@ -677,11 +617,7 @@ table.tabla .folio { font-family: var(--f-titulo); font-weight: 800; letter-spac
 .btn-google svg { width: 18px; height: 18px; }
 
 /* ---------- 9. WhatsApp flotante ------------------------------------- */
-.wa-flotante {
-  position: fixed; z-index: 95;
-  right: calc(1.15rem + env(safe-area-inset-right, 0px));
-  bottom: calc(1.15rem + env(safe-area-inset-bottom, 0px));
-}
+.wa-flotante { position: fixed; right: 1.15rem; bottom: 1.15rem; z-index: 95; }
 .wa-btn {
   width: 56px; height: 56px; border-radius: 50%; border: 0; cursor: pointer;
   background: #25D366; color: #062512;
