@@ -20,7 +20,7 @@ function render_header(string $titulo = '', array $opciones = []): void
 <html lang="es" data-tema-pref="<?= e($temaPref) ?>">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e($tituloFull) ?></title>
 <meta name="description" content="<?= e($desc) ?>">
 <meta name="theme-color" content="#0A0A0B">
@@ -28,7 +28,7 @@ function render_header(string $titulo = '', array $opciones = []): void
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="<?= url('css/styles.css') ?>?v=2">
+<link rel="stylesheet" href="<?= url('css/styles.css') ?>?v=1">
 <script>
 /* Aplica el tema antes de pintar, para evitar el parpadeo blanco. */
 (function () {
@@ -169,7 +169,7 @@ function render_footer(array $opciones = []): void
 </div>
 
 <script>window.CP_WA_NUMERO = <?= json_encode(wa_numero()) ?>;</script>
-<script src="<?= url('js/main.js') ?>?v=2" defer></script>
+<script src="<?= url('js/main.js') ?>?v=1" defer></script>
 </body>
 </html>
 <?php
