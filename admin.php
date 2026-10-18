@@ -39,7 +39,6 @@ switch ($view) {
     case 'estados':       adm_estados();       break;
     case 'contenido':     adm_contenido();     break;
     case 'aliados':       adm_aliados();       break;
-    case 'cuenta':        adm_cuenta();        break;
     case 'logout':        adm_logout();        break;
     default:
         http_response_code(404);
@@ -76,14 +75,14 @@ function adm_header(string $titulo): void
 <html lang="es" data-tema="oscuro">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?= e($titulo) ?> · Panel</title>
 <link rel="icon" href="<?= url('assets/logo.svg') ?>" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="<?= url('css/styles.css') ?>?v=2">
+<link rel="stylesheet" href="<?= url('css/styles.css') ?>?v=1">
 <script>
 (function () {
   try {
@@ -96,18 +95,8 @@ function adm_header(string $titulo): void
 <body data-base="<?= e(CP_URL) ?>" data-csrf="<?= e(csrf_token()) ?>" data-logueado="0">
 <div class="panel-layout">
 
-  <div class="panel-topbar no-imprimir">
+  <aside class="panel-lateral no-imprimir">
     <a class="marca" href="<?= url('admin/admin.php?view=dashboard') ?>">
-      <img src="<?= url('assets/logo.svg') ?>" alt="" width="28" height="28">
-      <span class="marca__txt">Panel</span>
-    </a>
-    <button class="nav-toggle" type="button" id="panel-toggle" aria-expanded="false" aria-controls="panel-lateral" aria-label="Abrir menú">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-
-  <aside class="panel-lateral no-imprimir" id="panel-lateral">
-    <a class="marca marca--escritorio" href="<?= url('admin/admin.php?view=dashboard') ?>">
       <img src="<?= url('assets/logo.svg') ?>" alt="" width="32" height="32">
       <span class="marca__txt">Panel</span>
     </a>
@@ -123,7 +112,6 @@ function adm_header(string $titulo): void
     <?php endforeach; ?>
 
     <p class="separador">Sesión</p>
-    <a href="<?= url('admin/admin.php?view=cuenta') ?>" class="<?= $actual === 'cuenta' ? 'activo' : '' ?>">Mi cuenta</a>
     <a href="<?= url('index.php') ?>" target="_blank" rel="noopener">Ver el sitio ↗</a>
     <a href="<?= url('admin/admin.php?view=logout') ?>">Cerrar sesión</a>
 
@@ -144,7 +132,7 @@ function adm_footer(): void
     ?>
   </div>
 </div>
-<script src="<?= url('js/main.js') ?>?v=2" defer></script>
+<script src="<?= url('js/main.js') ?>?v=1" defer></script>
 </body>
 </html>
     <?php
@@ -170,106 +158,6 @@ function adm_logout(): void
     session_regenerate_id(true);
     flash('info', 'Sesión de administrador cerrada.');
     redirigir('index.php');
-}
-
-// =====================================================================
-// MI CUENTA — cambio de contraseña del administrador
-// =====================================================================
-function adm_cuenta(): void
-{
-    $admin = admin_actual();
-    $pdo   = db();
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        csrf_verificar();
-
-        $actual  = (string) ($_POST['password_actual'] ?? '');
-        $nueva   = (string) ($_POST['password_nueva'] ?? '');
-        $repetir = (string) ($_POST['password_repetir'] ?? '');
-
-        $q = $pdo->prepare('SELECT password_hash FROM admins WHERE id = ?');
-        $q->execute([$admin['id']]);
-        $hash = (string) $q->fetchColumn();
-
-        if (!password_verify($actual, $hash)) {
-            flash('error', 'La contraseña actual no coincide.');
-        } elseif (strlen($nueva) < 12) {
-            flash('error', 'La nueva contraseña necesita al menos 12 caracteres.');
-        } elseif ($nueva !== $repetir) {
-            flash('error', 'La confirmación no coincide con la nueva contraseña.');
-        } elseif ($nueva === $actual) {
-            flash('error', 'La nueva contraseña debe ser distinta de la anterior.');
-        } else {
-            $up = $pdo->prepare('UPDATE admins SET password_hash = ? WHERE id = ?');
-            $up->execute([password_hash($nueva, PASSWORD_DEFAULT), $admin['id']]);
-            flash('exito', 'Contraseña actualizada. Úsala la próxima vez que entres.');
-        }
-        redirigir('admin/admin.php?view=cuenta');
-    }
-
-    $intentos = $pdo->query(
-        'SELECT ip, usuario, exito, creado_en FROM login_intentos ORDER BY creado_en DESC LIMIT 10'
-    )->fetchAll();
-
-    adm_header('Mi cuenta');
-    adm_titulo('Mi cuenta', 'Sesión iniciada como ' . $admin['usuario']);
-    ?>
-
-    <div class="dos-columnas">
-      <div>
-        <form method="post" class="panel-form" style="max-width:520px">
-          <?= csrf_campo() ?>
-          <h3>Cambiar mi contraseña</h3>
-          <p class="apagado pequeno">Hazlo en cuanto el sitio pase a producción, y cada vez que sospeches de una filtración.</p>
-
-          <div class="campo">
-            <label for="password_actual">Contraseña actual</label>
-            <input type="password" id="password_actual" name="password_actual" required autocomplete="current-password">
-          </div>
-
-          <div class="campo">
-            <label for="password_nueva">Nueva contraseña</label>
-            <input type="password" id="password_nueva" name="password_nueva" required minlength="12" autocomplete="new-password">
-            <p class="ayuda">Mínimo 12 caracteres. Una frase larga es más segura y más fácil de recordar que símbolos raros.</p>
-          </div>
-
-          <div class="campo">
-            <label for="password_repetir">Repite la nueva contraseña</label>
-            <input type="password" id="password_repetir" name="password_repetir" required minlength="12" autocomplete="new-password">
-          </div>
-
-          <button class="btn btn--rojo" type="submit">Actualizar contraseña</button>
-        </form>
-      </div>
-
-      <div>
-        <div class="tarjeta">
-          <h3>Últimos accesos al panel</h3>
-          <p class="apagado pequeno">Si ves intentos fallidos de una IP que no reconoces, rota la dirección de acceso desde «Textos e imágenes».</p>
-          <?php if (!$intentos): ?>
-            <p class="apagado pequeno" style="margin:0">Sin registros todavía.</p>
-          <?php else: ?>
-            <ul class="lista-pendientes">
-              <?php foreach ($intentos as $i): ?>
-                <li>
-                  <div>
-                    <strong class="pequeno"><?= e($i['usuario'] ?: '—') ?></strong>
-                    <span class="pequeno apagado"> · <?= e($i['ip']) ?></span>
-                    <br><span class="pequeno apagado"><?= e(fecha_fmt($i['creado_en'])) ?></span>
-                  </div>
-                  <span class="pastilla pequeno" style="color:<?= $i['exito'] ? '#21C07A' : 'var(--accent-red)' ?>">
-                    <?= $i['exito'] ? 'Correcto' : 'Fallido' ?>
-                  </span>
-                </li>
-              <?php endforeach; ?>
-            </ul>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
-
-    <?php
-    adm_footer();
 }
 
 /** Suma de lo que se le debe a un aliado (referidos no pagados). */
@@ -1055,7 +943,7 @@ function adm_orden_editar(): void
           <form method="post">
             <?= csrf_campo() ?>
             <input type="hidden" name="accion" value="pieza_agregar">
-            <div class="grid-pieza-form">
+            <div style="display:grid;grid-template-columns:2fr 1fr .6fr 1fr auto;gap:.6rem;align-items:flex-end">
               <div>
                 <label for="pieza_nombre">Pieza</label>
                 <input type="text" id="pieza_nombre" name="pieza_nombre" placeholder="Pantalla OLED iPhone 12" required>
@@ -1213,13 +1101,13 @@ function adm_ticket(): void
 <html lang="es" data-tema="claro">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Ticket <?= e($orden['folio']) ?></title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="<?= url('css/styles.css') ?>?v=2">
+<link rel="stylesheet" href="<?= url('css/styles.css') ?>?v=1">
 </head>
 <body style="padding:2rem 1rem">
 
@@ -1669,7 +1557,7 @@ function adm_estados(): void
             <input type="hidden" name="accion" value="guardar">
             <input type="hidden" name="id" value="<?= (int) $es['id'] ?>">
 
-            <div class="grid-estado-form">
+            <div style="display:grid;grid-template-columns:2fr .7fr .8fr auto auto;gap:.7rem;align-items:flex-end">
               <div>
                 <label for="es_n_<?= (int) $es['id'] ?>">Nombre</label>
                 <input type="text" id="es_n_<?= (int) $es['id'] ?>" name="nombre" value="<?= e($es['nombre']) ?>" required>
@@ -1682,7 +1570,7 @@ function adm_estados(): void
                 <label for="es_c_<?= (int) $es['id'] ?>">Color</label>
                 <input type="text" id="es_c_<?= (int) $es['id'] ?>" name="color" value="<?= e($es['color']) ?>" style="font-family:monospace">
               </div>
-              <label class="grid-estado-form__activo">
+              <label style="display:flex;gap:.4rem;align-items:center;color:var(--text-primary);font-weight:500;padding-bottom:.7rem">
                 <input type="checkbox" name="activo" value="1" style="width:auto" <?= $es['activo'] ? 'checked' : '' ?>>
                 Activo
               </label>

@@ -93,13 +93,13 @@ if (!$bloqueado && $_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="es" data-tema="oscuro">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Acceso</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="<?= url('css/styles.css') ?>?v=2">
+<link rel="stylesheet" href="<?= url('css/styles.css') ?>?v=1">
 </head>
 <body>
 <div class="login-centro">
